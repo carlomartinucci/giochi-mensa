@@ -5,10 +5,12 @@ import {
   tap,
   // reset,
   selectCascata,
+  selectIsSolution,
 } from './cascataSlice';
 
 const Cascata = () => {
   const state = useSelector(selectCascata)
+  const isSolution = useSelector(selectIsSolution)
   const dispatch = useDispatch();
 
   const handleClick = index => e => dispatch(tap(index))
@@ -20,13 +22,14 @@ const Cascata = () => {
           values={state.values}
           onClick={handleClick}
           selected={state.selected}
+          isSolution={isSolution}
         />
       </div>
     </div>
   )
 }
 
-const Inputs = ({ values, selected, onClick }) => {
+const Inputs = ({ values, isSolution, selected, onClick }) => {
   let inputs = []
   for (let i = 0; i < 14 * 14; i++) {
     const value = values[i]
@@ -45,7 +48,7 @@ const Inputs = ({ values, selected, onClick }) => {
         <input
           key={i}
           className={`crossword-board__item ${
-            i === selected ? "crossword-board__item--selected" : ""
+            i === selected || (isSolution && value !== ' ') ? "crossword-board__item--selected" : ""
           } ${
             14 * 6 <= i && i < 14 * 7
               ? "crossword-board__item--border-bottom"

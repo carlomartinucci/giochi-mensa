@@ -1,0 +1,35 @@
+.crossword-square {
+  border: 1px solid #222;
+  background: transparent;
+  position: relative;
+  z-index: 100;
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+span.crossword-square {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.crossword-square:active,
+.crossword-square:focus {
+  border: 1px solid #222;
+  outline: 1px solid #222;
+}
+
+.crossword-square--shaded {
+  background: #ccc;
+  border: 1px solid #222;
+  outline: 1px solid #222;
+}
+
+.crossword-square--selected {
+  background: #ff0;
+}
+
+.crossword-square--border-bottom {
+  border-bottom: 2px solid #222;
+}

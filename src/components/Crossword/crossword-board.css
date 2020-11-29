@@ -1,0 +1,19 @@
+.crossword-board-container {
+  position: relative;
+  background: #ffffff;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.crossword-board {
+  position: absolute;
+  z-index: 1;
+  background: transparent;
+  border: 1px solid #222;
+  display: grid;
+  grid-template-areas: none;
+  list-style-type: none;
+  padding: 0;
+  margin: 1vmin;
+}

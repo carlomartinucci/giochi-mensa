@@ -7,7 +7,10 @@ const CrosswordBoard = props => {
   const crosswordBoardStyle = useCrosswordBoardStyle(props.rows, props.columns)
 
   return (
-    <div className="crossword-board-container">
+    <div
+      className="crossword-board-container"
+      style={{ height: `calc(${crosswordBoardStyle.height} + 2vmin)` }}
+    >
       <div className="crossword-board" style={crosswordBoardStyle}>
         {props.children}
       </div>

@@ -1,8 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit"
 import localforage from "localforage"
 
-import { state as serverState } from "./server.js"
-
 const initialValues = [
   "______________",
   "______________",
@@ -21,22 +19,21 @@ const initialValues = [
 ].join("")
 
 const initialState = {
-  description: "Cascata di lettere",
   width: 14,
   height: 14,
   values: initialValues,
   selected: null,
 }
 
-const sameColumn = (state, i1, i2) => i1 % state.width === i2 % state.width
-const swap = (state, i1, i2) => {
+const sameColumn = (width, i1, i2) => i1 % width === i2 % width
+const swap = (values, i1, i2) => {
   const [first, last] = i1 < i2 ? [i1, i2] : [i2, i1]
   return (
-    state.values.substr(0, first) +
-    state.values[last] +
-    state.values.substring(first + 1, last) +
-    state.values[first] +
-    state.values.substr(last + 1)
+    values.substr(0, first) +
+    values[last] +
+    values.substring(first + 1, last) +
+    values[first] +
+    values.substr(last + 1)
   )
 }
 
@@ -50,9 +47,16 @@ export const cascataSlice = createSlice({
       })
     },
     setState: (state, action) => {
-      Object.keys(action.payload).forEach(key => {
-        state[key] = action.payload[key]
-      })
+      state.width = action.payload.width
+      state.height = action.payload.height
+      state.values = action.payload.values
+      while (
+        state.values.length <
+        action.payload.width * action.payload.height
+      ) {
+        state.values += " "
+      }
+      state.selected = null
     },
     setValues: (state, action) => {
       state.values = action.payload
@@ -63,10 +67,9 @@ export const cascataSlice = createSlice({
         state.selected = payload.selected
       } else if (payload.selected === state.selected) {
         state.selected = null
-      } else if (sameColumn(state, state.selected, payload.selected)) {
-        state.values = swap(state, state.selected, payload.selected)
-        const { selected, ...stateToSave } = state
-        localforage.setItem(`cascata-${payload.id}`, stateToSave)
+      } else if (sameColumn(state.width, state.selected, payload.selected)) {
+        state.values = swap(state.values, state.selected, payload.selected)
+        localforage.setItem(`cascata-${payload.id}`, state.values)
         state.selected = null
       } else {
         state.selected = payload.selected
@@ -75,36 +78,17 @@ export const cascataSlice = createSlice({
   },
 })
 
-export const { unload, tap, setValues } = cascataSlice.actions
+export const { unload, tap, setState, setValues } = cascataSlice.actions
 
-const { setState } = cascataSlice.actions
-
-export const load = id => dispatch => {
-  console.log("loading from localforage", id)
-  localforage
-    .getItem(`cascata-${id}`)
-    .then(state => {
-      if (state) {
-        console.log("loaded from localforage", id, state)
-        dispatch(setState(state))
-      } else {
-        console.error("NOT loaded from localforage", id)
-        throw new Error(`key "cascata-${id}" not found in localforage`)
-      }
-    })
-    .catch(error => {
-      console.error("ERROR NOT loaded from localforage", id, error)
-      setTimeout(() => {
-        if (serverState[id]) {
-          console.log("loaded from server", id, serverState[id])
-          dispatch(setState(serverState[id]))
-          return true
-        } else {
-          console.error("NOT loaded from server", id)
-          return false
-        }
-      }, 1000)
-    })
+export const loadLocalValues = (id, serverValues) => dispatch => {
+  localforage.getItem(`cascata-${id}`).then(values => {
+    if (values) {
+      console.log("loaded from localforage", id, values)
+      dispatch(setValues(values))
+    } else {
+      console.log("NOT loaded from localforage", id)
+    }
+  })
 }
 
 export const selectCascata = state => state.cascata

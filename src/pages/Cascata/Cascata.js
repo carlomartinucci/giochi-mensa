@@ -3,7 +3,8 @@ import React, { useEffect } from "react"
 import { useSelector, useDispatch } from "react-redux"
 import {
   tap,
-  load,
+  setState,
+  loadLocalValues,
   unload,
   selectIsSolution,
   selectRows,
@@ -13,19 +14,21 @@ import {
 import CrosswordBoard from "../../components/Crossword/CrosswordBoard"
 import CrosswordSquare from "../../components/Crossword/CrosswordSquare"
 
-const Cascata = ({ id }) => {
+const Cascata = ({ cascata }) => {
+  const { id } = cascata
   const values = useSelector(state => state.cascata.values)
-  const description = useSelector(state => state.cascata.description)
-  const rows = useSelector(selectRows)
-  const columns = useSelector(selectColumns)
+  const description = cascata.description
+  const rows = cascata.height
+  const columns = cascata.width
   const dispatch = useDispatch()
 
   useEffect(() => {
-    dispatch(load(id))
+    dispatch(setState(cascata))
+    dispatch(loadLocalValues(id, cascata.values))
     return () => {
       dispatch(unload())
     }
-  }, [dispatch, id])
+  }, [dispatch, id, cascata])
 
   return (
     <React.Fragment>

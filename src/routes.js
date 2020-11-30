@@ -6,6 +6,7 @@ import HomeLayout from "./pages/HomeLayout"
 import CascataLayout from "./pages/CascataLayout"
 import CascataIndex from "./pages/CascataIndex"
 import CascataShow from "./pages/CascataShow"
+import CascataNew from "./pages/CascataNew"
 
 const routes = [
   {
@@ -21,6 +22,7 @@ const routes = [
     nestedRoutes: [
       { path: "/", name: "CascataIndex", Component: CascataIndex },
       { path: ":cascataId", name: "CascataShow", Component: CascataShow },
+      { path: "new", name: "CascataNew", Component: CascataNew },
     ],
   },
 ]
